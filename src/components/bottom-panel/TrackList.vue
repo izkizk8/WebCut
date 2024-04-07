@@ -1,7 +1,17 @@
 <script setup lang="ts">
 import IconMusic from '~/assets/icons/icon-music.svg?component'
 import IconText from '~/assets/icons/icon-text.svg?component'
-import IconVideo from '~/assets/icons/icon-video.svg?component'
+import { getClip } from '~/utils/clip'
+import movie from '/bird.mp4'
+import { ref, watchEffect } from 'vue'
+
+const imgList = ref([])
+watchEffect(async () => {
+  imgList.value = (await getClip(movie)).map(it => ({
+    img: URL.createObjectURL(it.img),
+    ts: it.ts
+  }))
+})
 </script>
 <template>
   <div class="grid content-center flex-1 text-center">
@@ -12,9 +22,12 @@ import IconVideo from '~/assets/icons/icon-video.svg?component'
       </div>
     </div>
     <div class="video-track">
-      <div class="flex gap-2">
-        <IconVideo />
-        <span>+ 视频轨道</span>
+      <div class="flex flex-row overflow-auto">
+        <template v-for="img in imgList" :key="img.ts">
+          <div class="tooltip flex-none" :data-tip="(img.ts / 1e6).toFixed(2) + 's'">
+            <img :src="img.img" />
+          </div>
+        </template>
       </div>
     </div>
     <div class="music-track">
@@ -46,7 +59,7 @@ import IconVideo from '~/assets/icons/icon-video.svg?component'
   // align-content: center;
   transition: width 200ms ease-out 0s;
   position: relative;
-  height: 48px;
+  height: 70px;
   background: rgb(30, 30, 41);
 }
 .music-track {
