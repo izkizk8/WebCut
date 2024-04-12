@@ -13,9 +13,37 @@ export const usePlayerStore = defineStore('playerStore', () => {
   // 轨道数
   const trackCount = computed(() => playList.value.length)
 
+  const canvasRef = ref<HTMLCanvasElement | null>(null)
+
+  const fullScreen = ref(false)
+
+  function toggleFullScreen() {
+    fullScreen.value = !fullScreen.value
+  }
+
+  const videoRef = ref<HTMLVideoElement | null>(null)
+
   const currentTime = ref<number>(0)
+
+  function forward(seconds: number) {
+    if (videoRef.value) {
+      videoRef.value.currentTime += seconds
+    }
+  }
 
   const duration = ref<number>(0)
 
-  return { playStatus, togglePlay, playList, trackCount, currentTime, duration }
+  return {
+    playStatus,
+    togglePlay,
+    playList,
+    trackCount,
+    canvasRef,
+    toggleFullScreen,
+    fullScreen,
+    videoRef,
+    forward,
+    currentTime,
+    duration
+  }
 })
